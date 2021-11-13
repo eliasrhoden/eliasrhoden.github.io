@@ -51,9 +51,11 @@ here I will explain the overall concept and how I ended up with a MIP-problem.
 
 ## F1 Fantasy as a MIP 
 Assume that we have $$N$$ teams (and thereby $$2N$$ drivers), we then define two decision vectors $$z^D \in \mathrm{I}^{2N}$$ (One for each driver) and $$z^t \in \mathrm{I}^N$$ (one for each team). Each element of the $$z$$ vector are limited to the range $$[0,\ 1]$$ (and integer values) making them *boolean variables*.  Where they represent if a team/driver is picked or not.
-Also please note the difference between $$z^T$$ and $$z^t$$, the lower case t means *team* and the upper case T means transpose, not that it would make much of a difference but I mention it anyways just to avoid confusion.
 
 As an example, $$z_1^D$$ is equal to $$1$$ if driver 1 should be picked into the lineup, and similar for the team vector.
+
+
+Also please note the difference between $$z^T$$ and $$z^t$$, the lower case t means *team* and the upper case T means transpose, not that it would make much of a difference but I mention it anyways just to avoid confusion.
 
 
 In F1 fantasy you need to pick 5 drivers and a team, while being on a budget. We need to formulate this as a constraint for the optimization problem, it must pick 5 drivers 
