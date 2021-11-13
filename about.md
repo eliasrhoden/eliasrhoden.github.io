@@ -4,15 +4,15 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Hello!
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+My name is Elias and welcome to my blog, here I will write about random progamming projects that I do in my spare time. The idea is that this blog will serve as a complement to my [Github profile](https://github.com/eliasrhoden), where I can focus more on the backstory behing the projects I upload.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
+My general interests are:
+	* Programming
+	* Industrial Automation
+	* Control theory/Control systems
+	* Optimization
 
 
-[jekyll-organization]: https://github.com/jekyll
+If you wanna check out my academic brackground, I would refer to my [LinkedIn profile](www.linkedin.com/in/elias-rhoden-265609224).
