@@ -30,7 +30,7 @@ $$
 \end{align} 
 $$
 
-where $z$ is a vector with the decision parameters and some, or all elements of $z$ are constrained to integer values. I would say that it's more important to understand what goes into 
+where $$z$$ is a vector with the decision parameters and some, or all elements of $$z$$ are constrained to integer values. I would say that it's more important to understand what goes into 
 standard Linear programming since MIP is an extension of that. In case you haven't heard about Stephen Boyd's lectures 
 on convex optimization (that includes LP's) now's the time to find a [pure gold-mine](https://www.youtube.com/watch?v=McLq1hEq3UY&list=PL3940DD956CDF0622).
 
@@ -50,14 +50,14 @@ here I will explain the overall concept and how I ended up with a MIP-problem.
 
 
 ## F1 Fantasy as a MIP 
-Assume that we have $N$ teams (and thereby $2N$ drivers), we then define two decision vectors $z^D \in \mathrm{I}^{2N}$ (One for each driver) and $z^T \in \mathrm{I}^N$ (one for each team). Each element of the $z$ vector are limited to the range $[0,\ 1]$ (and integer values) making them *boolean variables*.  Where they represent if a team/driver is picked or not.
+Assume that we have $$N$$ teams (and thereby $$2N$$ drivers), we then define two decision vectors $$z^D \in \mathrm{I}^{2N}$$ (One for each driver) and $$z^T \in \mathrm{I}^N$$ (one for each team). Each element of the $$z$$ vector are limited to the range $$[0,\ 1]$$ (and integer values) making them *boolean variables*.  Where they represent if a team/driver is picked or not.
 
 
-As an example, $z_1^D$ is equal to $1$ if driver 1 should be picked into the lineup, and similar for the team vector.
+As an example, $$z_1^D$$ is equal to $$1$$ if driver 1 should be picked into the lineup, and similar for the team vector.
 
 
 In F1 fantasy you need to pick 5 drivers and a team, while being on a budget. We need to formulate this as a constraint for the optimization problem, it must pick 5 drivers 
-and 1 team. No more, no less. This is quite easy to formulate based on how we defined our $z$ vectors.
+and 1 team. No more, no less. This is quite easy to formulate based on how we defined our $$z$$ vectors.
 
 The constraints are simply
 
@@ -66,7 +66,7 @@ $$
 $$
 
 
-The next constraint is the budget, assuming we have a budget of $B$ million dollars, and that each driver and team have their corresponding costs $C^D_i$ and $C^T_i$. The budget constraint can then be 
+The next constraint is the budget, assuming we have a budget of $$B$$ million dollars, and that each driver and team have their corresponding costs $$C^D_i$$ and $$C^T_i$$. The budget constraint can then be 
 formulated as 
 
 $$
@@ -74,8 +74,8 @@ $$
 $$
 
 
-Lastly we want to formulate the points scored by the lineup, what we actually want to maximize. It is very similar to how we formulated the budget constraint, assuming that each driver and team have scored $P^D_i$ and $P^T_i$ respectively.
-Then the cost to maximize $J$ is 
+Lastly we want to formulate the points scored by the lineup, what we actually want to maximize. It is very similar to how we formulated the budget constraint, assuming that each driver and team have scored $$P^D_i$$ and $$P^T_i$$ respectively.
+Then the cost to maximize $$J$$ is 
 
 
 $$
