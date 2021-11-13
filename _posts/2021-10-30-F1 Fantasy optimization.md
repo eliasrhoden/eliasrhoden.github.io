@@ -92,6 +92,9 @@ Have in mind that this optimization does not account for special selections such
 
 ## Example
 To showcase how to use the Google OR-tools, I've written a short example, where I optimize the selection of two drivers from a list of 5.
+
+Note how I don't need to formulate the problem on the standard form, but I only need to add the constraints and OR-tools will reformulate the problem on the required form by the solver for me.
+
 ```python
 from ortools.linear_solver import pywraplp
 
