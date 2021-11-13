@@ -177,10 +177,6 @@ Total points: 140.0
 Brute force lineup: (2, 3)
 ```
 
-## Data source
-I also want to mention that this would not have been possible without the data I found on [kaggle](https://www.kaggle.com/prathamsharma123/formula-1-fantasy-2021).
-It did needed some cleanup due to inconsistent  naming, and I also included a json-file of the [cleaned data](https://github.com/eliasrhoden/f1_fantasy_optimization/blob/master/clean_data.json) on my github-repo.
-
 ## The optimal lineup*
 *Without regard to Mega and turbo-drivers.
 
@@ -189,6 +185,9 @@ As mentioned in my Github-readme, I optimized 3 cases.
 2. Unlimited substitutions.
 3. The same lineup for last 5 races.
 
+### Data source
+I also want to mention that this would not have been possible without the data I found on [kaggle](https://www.kaggle.com/prathamsharma123/formula-1-fantasy-2021).
+It did needed some cleanup due to inconsistent  naming, and I also included a json-file of the [cleaned data](https://github.com/eliasrhoden/f1_fantasy_optimization/blob/master/clean_data.json) on my github-repo.
 
 ### Optimal lineup for the whole season
 ```
