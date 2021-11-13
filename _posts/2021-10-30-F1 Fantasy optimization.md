@@ -6,7 +6,7 @@ categories: optimization
 ---
 
 Ever since watching the famous Netflix series *Drive to survive* I've been hooked on F1. If you haven't 
-watched it, I highly recommend  it (The current F1-season will be the fourth season).
+watched it, I highly recommend  it (The current F1-season will be the fourth Netflix-season).
 
 
 Next to the F1 season, there also exists something called F1 Fantasy, where you pick 5 drivers and a team 
@@ -15,7 +15,7 @@ can be found [here](https://fantasy.formula1.com/).
 
 
 However, I thought it would be cool to formulate the choice of drivers and team as an optimization problem, 
-and when you dive into it, you realize that it quite easily can be rewritten into a Mixed-Integer Linear Program.
+and when you dive into it, you realize that it can be rewritten into a Linear Mixed-Integer Program.
 
 
 # Mixed-Integer programming
@@ -50,8 +50,8 @@ here I will explain the overall concept and how I ended up with a MIP-problem.
 
 
 ## F1 Fantasy as a MIP 
-Assume that we have $$N$$ teams (and thereby $$2N$$ drivers), we then define two decision vectors $$z^D \in \mathrm{I}^{2N}$$ (One for each driver) and $$z^T \in \mathrm{I}^N$$ (one for each team). Each element of the $$z$$ vector are limited to the range $$[0,\ 1]$$ (and integer values) making them *boolean variables*.  Where they represent if a team/driver is picked or not.
-
+Assume that we have $$N$$ teams (and thereby $$2N$$ drivers), we then define two decision vectors $$z^D \in \mathrm{I}^{2N}$$ (One for each driver) and $$z^t \in \mathrm{I}^N$$ (one for each team). Each element of the $$z$$ vector are limited to the range $$[0,\ 1]$$ (and integer values) making them *boolean variables*.  Where they represent if a team/driver is picked or not.
+Also please note the difference between $$z^T$$ and $$z^t$$, the lower case t means *team* and the upper case T means transpose, not that it would make much of a difference but I mention it anyways just to avoid confusion.
 
 As an example, $$z_1^D$$ is equal to $$1$$ if driver 1 should be picked into the lineup, and similar for the team vector.
 
@@ -62,24 +62,24 @@ and 1 team. No more, no less. This is quite easy to formulate based on how we de
 The constraints are simply
 
 $$
-\sum_{i=1}^{2N} \, z_i^D = 5, \quad \sum_{i=1}^{N} \, z_i^T = 1.
+\sum_{i=1}^{2N} \, z_i^D = 5, \quad \sum_{i=1}^{N} \, z_i^t = 1.
 $$
 
 
-The next constraint is the budget, assuming we have a budget of $$B$$ million dollars, and that each driver and team have their corresponding costs $$C^D_i$$ and $$C^T_i$$. The budget constraint can then be 
+The next constraint is the budget, assuming we have a budget of $$B$$ million dollars, and that each driver and team have their corresponding costs $$C^D_i$$ and $$C^t_i$$. The budget constraint can then be 
 formulated as 
 
 $$
-\sum_{i=1}^{2N} \, C^D_i \, z_i^D + \sum_{i=1}^{N} \, C^T_i\,z_i^T \leq B.
+\sum_{i=1}^{2N} \, C^D_i \, z_i^D + \sum_{i=1}^{N} \, C^t_i\,z_i^t \leq B.
 $$
 
 
-Lastly we want to formulate the points scored by the lineup, what we actually want to maximize. It is very similar to how we formulated the budget constraint, assuming that each driver and team have scored $$P^D_i$$ and $$P^T_i$$ respectively.
+Lastly we want to formulate the points scored by the lineup, what we actually want to maximize. It is very similar to how we formulated the budget constraint, assuming that each driver and team have scored $$P^D_i$$ and $$P^t_i$$ respectively.
 Then the cost to maximize $$J$$ is 
 
 
 $$
-J = \sum_{i=1}^{2N} \, P^D_i \, z_i^D + \sum_{i=1}^{N} \, P^T_i\,z_i^T.
+J = \sum_{i=1}^{2N} \, P^D_i \, z_i^D + \sum_{i=1}^{N} \, P^t_i\,z_i^t.
 $$
 
 
