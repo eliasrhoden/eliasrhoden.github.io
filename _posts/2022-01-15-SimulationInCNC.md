@@ -6,17 +6,17 @@ categories: dynamical systems, CNC, Sinumerik
 ---
 
 A while back I learned about the [Lorenz attractor](https://en.wikipedia.org/wiki/Lorenz_system) that was the result of trying to model the weather, 
-the interesting property of the Lorenz atractor (and thus also the weather) is that given different inital conditions, the systems trajectories varies a lot and is 
-for long time horizions basically impossible to predict. 
+the interesting property of the Lorenz attractor (and thus also the weather) is that given different initial conditions, the systems trajectories varies a lot and is 
+for long time horizons basically impossible to predict. 
 
 I really like [the example by Sebastien Gros](https://www.youtube.com/watch?v=Gkxq8nZJIbI) in a lecture on numerical optimal control, 
-were the caotic properties of the systems basically makes it almost impossible to find a optimal control input for a long time horizion.
+where the chaotic properties of the systems basically makes it almost impossible to find a optimal control input for a long time horizon.
 
-The Lorenz attractor is maybe more known by its *butterfly* like 3D-graph. But since this is only a standard plot, I thougt it would be cool to implement it on
+The Lorenz attractor is maybe more known by its *butterfly* like 3D-graph. But since this is only a standard plot, I thought it would be cool to implement it on
 a real world 3D-plotter, or as other may call it a *CNC-machine*. 
 
 In this post I will go into numerical integration a.k.a. simulating dynamical systems, and touch briefly
-on Sinumerik CNC programming. A combo that I've never seen before and should hopefully result in an interesing read.
+on Sinumerik CNC programming. A combo that I've never seen before and should hopefully result in an interesting read.
 
 # Lorenz attractor 
 The Lorenz attractor is a dynamical system with 3 states, where their derivatives are defined according to
@@ -65,7 +65,7 @@ z
 \end{bmatrix}
 $$
 
-When the system equation are given, the goal is that given an initial state $$x_0$$ (and optinally a time series of the control signal $$u$$)
+When the system equation are given, the goal is that given an initial state $$x_0$$ (and optionally a time series of the control signal $$u$$)
 and a time step, to create a time series of the state trajectory. Or more simply, given $$f$$, $$x_0$$ and $$\Delta T$$ compute the time series
 signal $$x_s [0] ... x_s[N]$$ that represent how the system states changes.
 
@@ -75,7 +75,7 @@ When I first learnt about numerical integration/system simulation, I started wit
 The idea behind *Forward Euler* is that the derivative is assumed to be constant over each *time step*, that means that the state at step $$k$$ is computed as
 
 $$
-x_s[k] = x_s[k-1] + f(x_s[k])\Delta T
+x_s[k] = x_s[k-1] + f(x_s[k-1])\Delta T
 $$
 
 In the following code snippet I implemented a simple simulation of *a mass on a cart* where the position of the cart is $$p$$, and
@@ -152,7 +152,7 @@ The resulting *state trajectory* is shown in the figure below.
 ## Runge-Kutta
 
 Even if *Forward Euler* is easy to understand it does have one big drawback, in order to yield accurate results, it requires really small timesteps, i.e.
-$$\Delta T$$, this means more computation and thus longer time to simulate. In order to simulate systems more accuratle without needing small 
+$$\Delta T$$, this means more computation and thus longer time to simulate. In order to simulate systems more accurate without needing small 
 timesteps, the *Runge-Kutta* method was developed, more info can be found on [Wikipedia](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods).
 
 Here I will use the Runge-Kutta method of 4th order, often denoted *RK4*.
@@ -174,8 +174,7 @@ $$
 x_s[k+1] = x_s[k] + \frac{1}{6}\Delta T(k1 + 2 k_2 + 2k_3 + k_4).
 $$
 
-Even if there is more computations required in the *RK* method, it still outweights the Newton method for larger systems and fro high tolerances.
-
+Even if there is more computations required in the *RK* method, it still outweighs the Newton method for larger systems and higher tolerances.
 
 In the following code snippet I show how to use *RK4* to solve for the state trajectory of the Lorenz system.
 ```python 
