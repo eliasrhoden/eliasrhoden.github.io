@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Simulating Lorenz attractor in Sinumerik CNC"
+title:  "Simulating Lorenz attractor in Sinumerik"
 date:   2022-09-17 12:00:00 +0200
 categories: dynamical systems, CNC, Sinumerik
 ---
@@ -42,7 +42,7 @@ $$
 \dot x_s = f(x_s,u),
 $$
 
-were $x_s$ is the state vector (don't mix it up with $x$ in the Lorenz system) and $u$ in the control input signal. For our Lorenz system we don't have an input signal, so the system will only depend on its state.
+were $$x_s$$ is the state vector (don't mix it up with $$x$$ in the Lorenz system) and $$u$$ in the control input signal. For our Lorenz system we don't have an input signal, so the system will only depend on its state.
 
 
 $$
@@ -65,9 +65,9 @@ z
 \end{bmatrix}
 $$
 
-When the system equation are given, the goal is that given an initial state $x_0$ (and optinally a time series of the control signal $u$)
-and a time step, to create a time series of the state trajectory. Or more simply, given $f$, $x_0$ and $\Delta T$ compute the time series
-signal $x_s [0] ... x_s[N]$ that represent how the system states changes.
+When the system equation are given, the goal is that given an initial state $$x_0$$ (and optinally a time series of the control signal $u$)
+and a time step, to create a time series of the state trajectory. Or more simply, given $$f$$, $$x_0$$ and $$\Delta T$$ compute the time series
+signal $$x_s [0] ... x_s[N]$$ that represent how the system states changes.
 
 ## Forward Euler
 When I first learnt about numerical integration/system simulation, I started with the *Forward Euler* method, which I think is a nice introduction to the problem and the general difficulties with simulation.
@@ -78,7 +78,7 @@ $$
 x_s[k] = x_s[k-1] + f(x_s[k])\Delta T
 $$
 
-In the following code snippet I implemented a simple simulation of *a mass on a cart* where the position of the cart is $p$, and
+In the following code snippet I implemented a simple simulation of *a mass on a cart* where the position of the cart is $$p$$, and
 the the acceleration of the cart is given as
 
 $$
@@ -152,12 +152,12 @@ The resulting *state trajectory* is shown in the figure below.
 ## Runge-Kutta
 
 Even if *Forward Euler* is easy to understand it does have one big drawback, in order to yield accurate results, it requires really small timesteps, i.e.
-$\Delta T$, this means more computation and thus longer time to simulate. In order to simulate systems more accuratle without needing small 
+$$\Delta T$$, this means more computation and thus longer time to simulate. In order to simulate systems more accuratle without needing small 
 timesteps, the *Runge-Kutta* method was developed, more info can be found on [Wikipedia](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods).
 
 Here I will use the Runge-Kutta method of 4th order, often denoted *RK4*.
 
-At time-step $k$, the following coefficients are computed 
+At time-step $$k$$, the following coefficients are computed 
 
 $$
 \begin{align}
@@ -174,7 +174,7 @@ $$
 x_s[k+1] = x_s[k] + \frac{1}{6}\Delta T(k1 + 2 k_2 + 2k_3 + k_4).
 $$
 
-Even if there is more computations required in the $RK$ method, it still outweights the Newton method for larger systems and fro high tolerances.
+Even if there is more computations required in the *RK* method, it still outweights the Newton method for larger systems and fro high tolerances.
 
 
 In the following code snippet I show how to use *RK4* to solve for the state trajectory of the Lorenz system.
