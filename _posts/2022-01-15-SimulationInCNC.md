@@ -251,7 +251,7 @@ if __name__ == '__main__':
 In order to simulate the Lorenz system on a Sinumerik CNC-machine, I implemented the lorenz equation and the *RK4* function.
 Below are the main program shown and also a GIF from the Sinutrain simulator.
 
-If you are interested in the Sinumerik code, I would refer to the [github repo](https://github.com/eliasrhoden).
+If you are interested in the Sinumerik code, I would refer to the [github repo](https://github.com/eliasrhoden/Lorenz-Sinumerik).
 
 ![](/assets/images/sinumerik_lorenz.png)
 
