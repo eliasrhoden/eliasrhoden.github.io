@@ -65,14 +65,14 @@ z
 \end{bmatrix}
 $$
 
-When the system equation are given, the goal is that given an initial state $$x_0$$ (and optinally a time series of the control signal $u$)
+When the system equation are given, the goal is that given an initial state $$x_0$$ (and optinally a time series of the control signal $$u$$)
 and a time step, to create a time series of the state trajectory. Or more simply, given $$f$$, $$x_0$$ and $$\Delta T$$ compute the time series
 signal $$x_s [0] ... x_s[N]$$ that represent how the system states changes.
 
 ## Forward Euler
 When I first learnt about numerical integration/system simulation, I started with the *Forward Euler* method, which I think is a nice introduction to the problem and the general difficulties with simulation.
 
-The idea behind *Forward Euler* is that the derivative is assumed to be constant over each *time step*, that means that the state at step $k$ is computed as
+The idea behind *Forward Euler* is that the derivative is assumed to be constant over each *time step*, that means that the state at step $$k$$ is computed as
 
 $$
 x_s[k] = x_s[k-1] + f(x_s[k])\Delta T
@@ -253,7 +253,37 @@ Below are the main program shown and also a GIF from the Sinutrain simulator.
 
 If you are interested in the Sinumerik code, I would refer to the [github repo](https://github.com/eliasrhoden/Lorenz-Sinumerik).
 
-![](/assets/images/sinumerik_lorenz.png)
+```
+DEF REAL STATE[3], DELTA, STATE_PLUS[3]
+DEF INT INK,NR_POINTS
+
+EXTERN LORENZ_RUKU4(VAR REAL[3], VAR REAL[3], REAL)
+
+; Simulation params
+NR_POINTS = 1500
+DELTA = 0.02
+
+; Initial condition
+STATE[0] = -1;1
+STATE[1] = 0;1
+STATE[2] = 22;30
+
+G94 F=100
+G0 X=STATE[0] Y=STATE[1] Z=STATE[2]
+;M0
+STOPRE
+FOR INK=0 TO NR_POINTS
+	LORENZ_RUKU4(STATE,STATE_PLUS,DELTA)
+	G1 X=STATE_PLUS[0] Y=STATE_PLUS[1] Z=STATE_PLUS[2]
+	;M0
+    ;STOPRE
+	STATE[0] = STATE_PLUS[0]
+	STATE[1] = STATE_PLUS[1]
+	STATE[2] = STATE_PLUS[2]
+ENDFOR
+
+M30
+```
 
 ![](/assets/images/sinulorenz.gif)
 
