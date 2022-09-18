@@ -152,7 +152,7 @@ The resulting *state trajectory* is shown in the figure below.
 ## Runge-Kutta
 
 Even if *Forward Euler* is easy to understand it does have one big drawback, in order to yield accurate results, it requires really small timesteps, i.e.
-$$\Delta T$$, this means more computation and thus longer time to simulate. In order to simulate systems more accurate without needing small 
+$$\Delta T$$, this means more computation is needed and thus longer time to simulate. In order to simulate systems more accurate without needing small 
 timesteps, the *Runge-Kutta* method was developed, more info can be found on [Wikipedia](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods).
 
 Here I will use the Runge-Kutta method of 4th order, often denoted *RK4*.
@@ -162,8 +162,8 @@ At time-step $$k$$, the following coefficients are computed
 $$
 \begin{align}
 k_1 &= f(x_s[k],t[k]) \\
-k_3 &= f(x_s[k] + \Delta T \frac{k_2}{2},t[k] + \frac{h}{2}) \\
 k_2 &= f(x_s[k] + \Delta T \frac{k_1}{2},t[k] + \frac{h}{2}) \\
+k_3 &= f(x_s[k] + \Delta T \frac{k_2}{2},t[k] + \frac{h}{2}) \\
 k_4 &= f(x_s[k] + \Delta T k_3,t)
 \end{align}
 $$
@@ -174,7 +174,7 @@ $$
 x_s[k+1] = x_s[k] + \frac{1}{6}\Delta T(k1 + 2 k_2 + 2k_3 + k_4).
 $$
 
-Even if there is more computations required in the *RK* method, it still outweighs the Newton method for larger systems and higher tolerances.
+Even if there is more computations required in the *RK* method, it still outweighs the Newton method for larger systems and where smaller error tolerances is required.
 
 In the following code snippet I show how to use *RK4* to solve for the state trajectory of the Lorenz system.
 ```python 
