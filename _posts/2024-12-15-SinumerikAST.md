@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Analysis of Sinumerik servo tuning"
-date:   2024-12-16 12:00:00 +0200
+date:   2024-12-15 12:00:00 +0200
 categories: sinumerik, control theory
 ---
 
