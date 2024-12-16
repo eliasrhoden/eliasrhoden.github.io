@@ -10,35 +10,37 @@ I’m very happy that I’m finally able to write this specific blog post, as it
 
 Since I first saw that it is possible to save the results from AST into an XML file, I’ve wanted to parse that data and analyze it on a PC outside of the Sinumerik control.
 
-All the code used is avaliable at my Github: https://github.com/eliasrhoden/Sinumerik-Ctrl
+So in this post I will parse the AST file from a spindle, identify the plant and design two alternative linear controllers and compare it with the AST controller.
+
+All the code used is avaliable at my Github: [https://github.com/eliasrhoden/Sinumerik-Ctrl](https://github.com/eliasrhoden/Sinumerik-Ctrl)
 
 # Sinumerik servo control
 
-As of today, Sinumerik uses Sinamics S120 drive system for servo control, and those are based on a cascaded control structure. The current controller is mainly dependent on the motor parameters and usually does not require any application dependent tuning.
-The velocity and position loop however do, especially the velocity loop, and this is also the most complicated to tune. The position controller is just a P-controller, so this one is quite easy to tune manually.
+As of today Sinumerik uses Sinamics S120 drive system for servo control, and those are based on a cascaded control structure. The current controller is mainly dependent on the motor parameters and usually does not require any application dependent tuning.
+The velocity and position loop however do, especially the velocity loop, and this is also the most complicated to tune. It is also in the velocity loop where there is the most potential to improve performance, since it is the "first loop" after the current/torque controller. In the default setting is the position controller simply a P-controller, and those are quite simple to tune manually.
 
-But the velocity loop is more complex and is the topic of this blog post. Since the velocity loop is more complex and in order to achieve good tuning without the help of drive experts, Siemens have implemented an auto-tune function. The structure of the velocity loop is a PI controller, where you can enable filters on the measured velocity or filters on the setpoint to the current controller. The filters you can enable are:
+Since the velocity loop is the most important control loop and in order to always achieve a good tuning (without the help of drive experts), Siemens have implemented an auto-tune function. The general structure of the velocity loop is a PI controller, where you can enable filters on the measured velocity, velocity setpoint or torque setpoint to the current controller. The type of filters you can enable are:
 * PT1 filters 
 * PT2 filters
 * General 2nd order filters
 
 With this structure you should be able to create any linear controller or stable transfer function.
 
-For this specific application, the control structure can be simplified substantially. 
+In this specific scenario where we are only interested in the velocity tuning, the control structure can be simplified substantially. 
 This diagram does not contain any feed forward or reference model since they don't influence the stability of the velocity loop.
 Please refer to the Siemens manuals if you want a more accurate description.
-![](/assets/images/sinumerik_cascaded.drawio.png)
+![](/assets/images/sinumerik_cascaded.drawio.svg)
 
 
 For more information regarding Siemens S120 I would recomend the following manuals:
 * Drive Optimization Guide: 
-https://support.industry.siemens.com/cs/document/60593549/drive-optimization-guide?dti=0&lc=en-GE 
+[https://support.industry.siemens.com/cs/document/60593549/drive-optimization-guide?dti=0&lc=en-GE](https://support.industry.siemens.com/cs/document/60593549/drive-optimization-guide?dti=0&lc=en-GE)
 
 * S120 List manual:
-https://www.industry-mobile-support.siemens-info.com/en/article/detail/109827046
+[https://www.industry-mobile-support.siemens-info.com/en/article/detail/109827046](https://www.industry-mobile-support.siemens-info.com/en/article/detail/109827046)
 
 * S120 Function manual:
-https://support.industry.siemens.com/cs/document/109781535/sinamics-s120-function-manual-for-drive-functions?dti=0&lc=en-AZ
+[https://support.industry.siemens.com/cs/document/109781535/sinamics-s120-function-manual-for-drive-functions?dti=0&lc=en-AZ](https://support.industry.siemens.com/cs/document/109781535/sinamics-s120-function-manual-for-drive-functions?dti=0&lc=en-AZ)
 
 
 # Behaviour of AST
@@ -46,11 +48,12 @@ I can only guess how the AST works, but based on the types of measurements and s
 
 From my experience with AST it always works well, in those cases where it doesn’t work, it is usually some mechanical issue. In the scenarios where I used AST, the resulting tuning only uses torque setpoint filters, I’ve never seen it use filters on the measured velocity. Which makes sense, theoretically it makes no difference in terms of stability if you filter the controller output, or the measured signal. But filtering the control output would possibly be more robust, since it excites less frequencies of the plant that might contain unknown resonances. 
 
+![](/assets/images/sinumerik_cascaded_setp.drawio.svg)
 
 # Reverse engineering AST Files
-As previously said, I’ve been wanting to do this type of analysis for quite some time, and the big hurdle has always been “How do I extract the bode plot from the AST files?”, this section will cover the big picture of that, but for more info I would refer to my github repo Trace-Tools (https://github.com/eliasrhoden/Trace-Tools).
+As previously said, I’ve been wanting to do this type of analysis for quite some time, and the big hurdle has always been “How do I extract the bode plot from the AST files?”, this section will give a quick overview of how the AST file is parsed, but for more info I would refer to my github repo Trace-Tools [(https://github.com/eliasrhoden/Trace-Tools)](https://github.com/eliasrhoden/Trace-Tools).
 
-When reading the AST-xml file, one can find a lot of parameters and meta data written in plain text. But the actual measurements or plant models are nowhere to be found. Instead there are a few sections named “FrequencyResponseFunction” that contain large sections of ascii encoded binary data. These are labeled “Base85”, and no joke, I’ve spent way too long trying to figure out how to decode this, I won’t go too much into what base85 if, but it is a technique where you encode 4 bytes into one ascii-character. Thus there is a mapping from int32 -> char. 
+When reading the AST-xml file, one can find a lot of parameters and meta data written in plain text. But the actual measurements or plant models are nowhere to be found. Instead there are a few sections named “FrequencyResponseFunction” that contain large sections of ascii encoded binary data. These are labeled “Base85”, and no joke, I’ve spent way too long trying to figure out how to decode this, I won’t go too much into what base85/Ascii85 is, but it is a technique where you encode 4 bytes into 5 ascii-character. Thus there is a mapping from int8 -> char. 
 
 ```xml
 <FrequencyResponseFunction satclassid="6" name="m_pPlant" ver="4.96.0.0.1" env="1">
@@ -66,7 +69,7 @@ I tried many ways to brute force this without success, I read out data points in
 
 Long story short, I found the mapping by looking at the ”FrequencyVector” where I knew that the frequency values are always increasing and by splitting the characters into rows, a clear pattern emerged.
 
-Just to mention it, here is the base85 mapping used:
+Just to mention it after all the time I spend to find it, here is the base85 mapping used:
 ```
 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$`()*+-/:;=?@[]^_{|}~
 ```
@@ -81,9 +84,8 @@ My expectation was that both of these (especially the Hinf) would beat the perfo
 In the AST file, the response of the current controller is also included, but for simplicity 
 (and that I ran into numerical issues trying to simulate the step response of the AST controller) I will not include that in the analysis here. Also the bandwidth of the current controller will not be the limiting factor in this case, as will later be shown.
 
-
 ## Plant model
-Starting with the plant, as mentioned this is the velocity control loop, so it is the transfer function from motor torque to motor velocity. This measurement is from a belt driven spindle, where only the motor encoder is available. 
+Starting with the plant, it is the transfer function from motor torque to motor velocity. This measurement is from a belt driven spindle, where only the motor encoder is available. 
 
 From the bode plot we see that we have an integrating system with one double zero and two double poles.
 
@@ -105,11 +107,11 @@ PT2:  w0 =  373.9453600549471 zeta =  0.04113635881529934
 Real:  -2.097556148013025
 ```
 
-where it is evident that the system contains both an undamped double zero and double pole.
+where it is evident that the system contains both an undamped double zero and double pole. It is also not a pure integrating system but instead has a single pole at 2 rad/s, the analysis will still work and this structure will also be needed when designing the Hinf controller, since it can't handle poles at 0.
 
 
 ## Robust stability
-One criteria I will look at later is robust stability, that uses the multiplicative model uncertainty. Given the multiplicative uncertainty, where the *real* plant is denoted $G^*(s)$, and the nominal model is $G(s)$, then the follwoing defines multiplicative uncertainty
+One criteria I will look at later is robust stability, that uses the multiplicative model uncertainty. Given the multiplicative uncertainty, where the *real* plant is denoted $$G^*(s)$$, and the nominal model is $$G(s)$$, then the follwoing defines multiplicative uncertainty
 
 $$
 W_\Delta (s) = \frac{G^*(s) - G(s)}{G(s)}
@@ -121,7 +123,7 @@ $$
 |T(j\omega) W_\Delta (j\omega)| < 1 
 $$
 
-Where $T$ is the complementary sensitivity function.
+Where $$T$$ is the complementary sensitivity function.
 
 In order to determine this I first determine the additive error and then the multiplicative error. In the next figure the true error is showed and the approximation used for analysis.
 
@@ -130,22 +132,23 @@ In order to determine this I first determine the additive error and then the mul
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/W_delta.png)
 
 ## Hinf controller 
-Firstly I’m not an expert in robust control, so my approach might not be the ideal or correct way of doing it so take it with a grain of salt. There exists a lot of material online about Hinf-controllers, but the big picture is that it is an optimization method where the $H_\infty$ norm of a generalized plant is minimized.
+Firstly I’m not an expert in robust control, so my approach might not be the ideal or correct way of doing it so take it with a grain of salt. There exists a lot of material online about Hinf-controllers, but the big picture is that it is an optimization method where the $$H_\infty$$ norm of a generalized plant is minimized.
 
 
 The difficult part about Hinf controller synthesis is that one must specify the requirements and signal properties in the frequency domain. In this case, I provide weights/specifications for the Sensitivity function, Complementary sensitivity function and the product of the controller and sensitivity function. 
-This is called “Mixed-sensitivity Hinf control design”, as described in this tutorial: https://juliacontrol.github.io/RobustAndOptimalControl.jl/dev/hinf_DC/
+This is called “Mixed-sensitivity Hinf control design”, as described in this tutorial: [https://juliacontrol.github.io/RobustAndOptimalControl.jl/dev/hinf_DC/](https://juliacontrol.github.io/RobustAndOptimalControl.jl/dev/hinf_DC/)
+
 
 I tried to do this in python, but the robust control functions require the installation of slycot that is troublesome on windows so I decided to try Julia for this part of the project, so far I like the robust control toolbox but it will not replace python as my main language.
 
-If you want to dive into the details you can check the Hinf code at: https://github.com/eliasrhoden/Sinumerik-Ctrl/blob/main/hinf_opt.ipynb
+If you want to dive into the details you can check the Hinf code at: [https://github.com/eliasrhoden/Sinumerik-Ctrl/blob/main/hinf_opt.ipynb](https://github.com/eliasrhoden/Sinumerik-Ctrl/blob/main/hinf_opt.ipynb)
 
 ## IMC Controller
-IMC stands for Internal Model Control, that implies that you have a controller C, that outputs to the plant but also a plant model, and the input to the controller is the error between the plant and model. For nonlinear plants, this results in a quite complicated controller, but for the linear case (with a linear plant) you can simply solve for the controller by inverting the plant. 
+IMC stands for Internal Model Control, that implies that you have a controller $$C$$, that outputs to the plant but also a plant model, and the input to the controller is the error between the plant and model. For nonlinear plants, this results in a quite complicated controller, but for the linear case (with a linear plant) you can simply solve for the controller by inverting the plant. 
 
-So in reality it is no internal model, rather it is plant inversion that is the key, but I will call it IMC since that is how I first discovered this technique.
+So in reality this is not really internal model control, rather it is plant inversion that is the key, but I will call it IMC since that is how I first discovered this technique.
 
-Given an invertible plant $G(s)$ and a referece model $M(s)$, the controller can be calculated as
+Given an invertible plant $$G(s)$$ and a referece model $$M(s)$$, the controller can be calculated as
 
 $$
 C_{imc}(s) = \frac{M(s)}{1 - M(s)} G^{-1}(s)
@@ -154,7 +157,7 @@ $$
 
 Since the IMC technique is based on model inversion, it is very important that we only invert stable zeros, since we don’t want any unstable poles in the controller.
 
-The main benefit of IMC is that the tuning consists of picking a reference model (that at least has the same relative degree of the plant). In this case, the plant has a relative degree of one, but I will pick a PT2 system as a reference model since I want to include some overshoot in the closed loop response.
+The main benefit of IMC is that the tuning consists of picking a reference model (that at least has the same relative degree as the plant). In this case, the plant has a relative degree of one, but I will pick a PT2 system as a reference model since I want to include some overshoot in the closed loop response.
 
 ## Controller frequency response
 
@@ -172,7 +175,7 @@ We can see that all controllers have somewhat similar margins, I would say that 
 
 ## Sensitivity function
 
-Regarding the sensitivity function, they all achieve similar bandwidth, looking at the peak values of all three shows that the IMC is the worst, by lowering the bandwidth of the reference model should reduce this peak, if needed. Other than that the AST controller seems to have better attenuation at lower frequencies as well.
+Regarding the sensitivity function, they all achieve similar bandwidth, looking at the peak values of all three shows that the IMC is the worst, by lowering the bandwidth of the reference model should reduce this peak if needed. It seems like the AST controller have slightly better attenuation at lower frequencies compared to the other.
 ```
 S_peak_ast: 1.11
 S_peak_hinf: 1.16
@@ -183,13 +186,13 @@ S_peak_imc: 1.27
 
 ## Robust stability
 
-Robust stability
-For robust stability, one looks for the highest peak, and here it is interesting to see that the Hinf controller performs the best overall, while the AST performs best in the lower frequency region. The worst one is the IMC controller, and I believe that the reason why the Hinf and IMC performs worse in the 200 rad/s area is due to the resonance in the controller. If a higher filter would have been added for the AST controller, I believe it would perform better in this metric. The high peak is far above the closed loop bandwidth, so another filter at the higher frequencies should not deteriorate the stability margins too much.
+For robust stability, one looks for the highest peak magnitude of $$TW_\Delta$$, and here it is interesting to see that the Hinf controller performs the best overall, while the AST performs best in the lower frequency region. The worst one is the IMC controller, and I believe that the reason why the Hinf and IMC performs worse in the 200 rad/s area is due to the resonance in their controllers. If a higher filter would have been added for the AST controller, I believe it would perform better in this metric. The high peak is far above the closed loop bandwidth, so another filter at the higher frequencies should not deteriorate the stability margins too much.
 
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/robust_stability.png)
 
 One interesting aspect is that Hinf was worse in terms of nominal stability (stability margins of open loop), but better in terms of robust stability.
+
 Looking at the peak values confirms the previous reasoning, all are still robustly stable, since none are above the value 1.
 
 ```
@@ -204,13 +207,13 @@ Looking at the closed loop response it is evident that the AST achieves the high
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/closed_loop.png)
 
-This compromise is more visible in the step response, where AST has the initial transient overshoot. From both the frequency response and step response, I would say that the IMC clearly looks best, but this is of course at the robust tradeoff with the resonance/double zero cancellation.
+This compromise is more visible in the step response, where AST has some overshoot and wierd movements in the initial transient. From both the frequency response and step response, I would say that the IMC clearly looks best, but this is of course at the robust tradeoff with the resonance/double zero cancellation.
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/step_response.png)
 
 The Hinf controller seems to be some middle-ground between them, but I would say that the undamped oscillations after the initial transient is a dealbreaker that this would not work in a real application.
 
-The overshoot of the AST controller is not that important, this is when applying a step input to the velocity reference, and that would never happen in a real scenario, where the NC interpolator would ramp velocity according to the acceleration parameters. Thus is this step response more of an example of how quickly disturbances would be suppressed.
+It's also worth mentioning that the overshoot of the AST controller is not that important, because this is simulattion is when applying a step input to the velocity reference, and that would never happen in a real scenario. In a real scenario would the NC interpolator ramp the velocity according to the acceleration parameters and never generate such abrupt setpoint changes. Thus is this step response more of an example of how quickly disturbances would be suppressed.
 
 ## IMC2 Controller
 So far, I would pick IMC in a theoretical scenario but in a real application I would pick the AST controller. But would it be possible to modify the IMC controller to yield a more robust/realistic controller? i.e. without trying to cancel the double zero of the plant?
@@ -218,18 +221,17 @@ As one last experiment, I will include the double zero in the reference model an
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/ref_model2.png)
 
-
 Looking at the bode plot of the controller, it looks more promising, there are no resonances, only zeros. It even has less bandwidth than the AST controller.
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/C_imc2_vs_ast.png)
 
 
-In terms of robust stability, the IMC2 controller even looks better than the AST controller. They have similar characteristics at low frequencies, but due to the lower magnitude of IMC2 at higher frequencies, we also note that the magnitude of robust stability decreases faster compared to the AST controller.
+In terms of robust stability, the IMC2 controller looks a bit better than the AST controller. They have similar characteristics at low frequencies but due to the lower magnitude of IMC2 at higher frequencies, the magnitude of robust stability decay faster compared to the AST controller.
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/robust_stability_imc2_vs_ast.png)
 
 
-One drawback of the IMC2 controller is that the sensitivity function has a greater peak compared to the AST system. 
+One drawback of the IMC2 controller is that the sensitivity function has a greater peak compared to the AST system.
 
 ![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/sensitivity_imc2_vs_ast.png)
 
@@ -246,11 +248,11 @@ As previously mentioned I no longer have access to the machine that the measurem
 
 
 # Conclusion
-The effect of the double zeros had a much bigger impact than what I initially thought, also if one would try to increase the bandwidth further of the reference model used for IMC2, the initial “valley” in the transient would increase, that was the main limiting factor when designing IMC2. 
+Based on the control designs I tried it is evident that the effect of the double zeros is much bigger than what I initially thought, also if one would try to increase the bandwidth further of the reference model used for IMC2, the initial “valley” in the transient would increase, that was the main limiting factor when designing IMC2. 
 
 Secondly I’m even more impressed by the performance of the AST, considering I’ve spent many hours on this analysis and design, on a modern PC. While the AST did it’s design in less than 5 minutes, on an industrial embedded system. That is really impressive.
 
 TL;DR: AST Works really well, and the main limitations are the zeros of the system, even if they are stable. You can achieve higher bandwidth but at the cost of less robustness by canceling the undamped zeros in the plant.
 
-If you want to have a look at the code used for this analysis, it can be found on my github: https://github.com/eliasrhoden/Sinumerik-Ctrl
+If you want to have a look at the code used for this analysis, it can be found on my github: [https://github.com/eliasrhoden/Sinumerik-Ctrl](https://github.com/eliasrhoden/Sinumerik-Ctrl)
 
