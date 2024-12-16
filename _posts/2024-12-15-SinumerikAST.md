@@ -89,11 +89,11 @@ Starting with the plant, it is the transfer function from motor torque to motor 
 
 From the bode plot we see that we have an integrating system with one double zero and two double poles.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/plant_ast.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/plant_ast.svg)
 
 First I select the frequency range of interest and fit a general 3rd order transfer function, it looks good but it contains one unstable zero outside of the measured frequency range. After removing it we end up with a good estimate of the transfer function of the mechanical system.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/plant_identification.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/plant_identification.svg)
 
 From the identified model, the system has the following zeros and poles 
 
@@ -127,9 +127,9 @@ Where $$T$$ is the complementary sensitivity function.
 
 In order to determine this I first determine the additive error and then the multiplicative error. In the next figure the true error is showed and the approximation used for analysis.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/additive_error.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/additive_error.svg)
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/W_delta.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/W_delta.svg)
 
 ## Hinf controller 
 Firstly I’m not an expert in robust control, so my approach might not be the ideal or correct way of doing it so take it with a grain of salt. There exists a lot of material online about Hinf-controllers, but the big picture is that it is an optimization method where the $$H_\infty$$ norm of a generalized plant is minimized.
@@ -163,13 +163,13 @@ The main benefit of IMC is that the tuning consists of picking a reference model
 
 Looking at the bode plots of each controller shows that they are quite similar. The first thing that stands out is that both Hinf and IMC have a resonance frequency at 270 rad/s  while the AST controller does not. I noticed that when trying to achieve higher bandwidth for the Hinf controller, this resonance peak would increase drastically. I assume this resonance comes from trying to cancel the undamped zeros in the plant at that frequency. While I believe this is fine from a theoretical standpoint, I don’t think it’s a robust way to handle it. Not only does the controller excite the plant even further, but if the mechanical properties of the system changes then you have introduced a new resonance which would be undesirable..
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/controllers.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/controllers.svg)
 
 ## Stability margins
 
 Continuing to compare the stability margins of the open loop, for this comparison I added a Padé delay of 125 us (sample time of the controller) because the plant would not cross 180 degrees for some controllers. 
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/open_loop_margins.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/open_loop_margins.svg)
 
 We can see that all controllers have somewhat similar margins, I would say that the worst one is Hinf due to its low gain margin. The phase margin of all systems are above 60 degrees which in my opinion is good enough. One possible improvement to the AST would be to include another filter at high frequencies, since that should improve the gain margin without compromising the phase margin, because the 180 degree-crossing is so much higher compared to the Hinf and IMC systems.
 
@@ -181,7 +181,7 @@ S_peak_ast: 1.11
 S_peak_hinf: 1.16
 S_peak_imc: 1.27
 ```
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/sensitivity_functions.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/sensitivity_functions.svg)
 
 
 ## Robust stability
@@ -189,7 +189,7 @@ S_peak_imc: 1.27
 For robust stability, one looks for the highest peak magnitude of $$TW_\Delta$$, and here it is interesting to see that the Hinf controller performs the best overall, while the AST performs best in the lower frequency region. The worst one is the IMC controller, and I believe that the reason why the Hinf and IMC performs worse in the 200 rad/s area is due to the resonance in their controllers. If a higher filter would have been added for the AST controller, I believe it would perform better in this metric. The high peak is far above the closed loop bandwidth, so another filter at the higher frequencies should not deteriorate the stability margins too much.
 
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/robust_stability.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/robust_stability.svg)
 
 One interesting aspect is that Hinf was worse in terms of nominal stability (stability margins of open loop), but better in terms of robust stability.
 
@@ -205,11 +205,11 @@ T_rob_imc_peak: 0.44
 
 Looking at the closed loop response it is evident that the AST achieves the highest bandwidth, but does have a clear double zero that is less visible in the other controllers, as to be expected, since both the Hinf and IMC tries to cancel the double zero in the plant and AST does not.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/closed_loop.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/closed_loop.svg)
 
 This compromise is more visible in the step response, where AST has some overshoot and wierd movements in the initial transient. From both the frequency response and step response, I would say that the IMC clearly looks best, but this is of course at the robust tradeoff with the resonance/double zero cancellation.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/step_response.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/step_response.svg)
 
 The Hinf controller seems to be some middle-ground between them, but I would say that the undamped oscillations after the initial transient is a dealbreaker that this would not work in a real application.
 
@@ -219,29 +219,29 @@ It's also worth mentioning that the overshoot of the AST controller is not that 
 So far, I would pick IMC in a theoretical scenario but in a real application I would pick the AST controller. But would it be possible to modify the IMC controller to yield a more robust/realistic controller? i.e. without trying to cancel the double zero of the plant?
 As one last experiment, I will include the double zero in the reference model and compute a new IMC controller, from here on denoted IMC2.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/ref_model2.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/ref_model2.svg)
 
 Looking at the bode plot of the controller, it looks more promising, there are no resonances, only zeros. It even has less bandwidth than the AST controller.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/C_imc2_vs_ast.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/C_imc2_vs_ast.svg)
 
 
 In terms of robust stability, the IMC2 controller looks a bit better than the AST controller. They have similar characteristics at low frequencies but due to the lower magnitude of IMC2 at higher frequencies, the magnitude of robust stability decay faster compared to the AST controller.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/robust_stability_imc2_vs_ast.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/robust_stability_imc2_vs_ast.svg)
 
 
 One drawback of the IMC2 controller is that the sensitivity function has a greater peak compared to the AST system.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/sensitivity_imc2_vs_ast.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/sensitivity_imc2_vs_ast.svg)
 
 The closed loop also looks very similar to AST, they achieve the same bandwidth, apart from that IMC2 has a faster rolloff than the AST controller.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/CL_imc2_vs_ast.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/CL_imc2_vs_ast.svg)
 
 From the step response it is also evident that the IMC2 controller has a marginally slower rise time, but a shorter settling time and also less overshoot.
 
-![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/step_response_imc2_vs_ast.png)
+![](https://raw.githubusercontent.com/eliasrhoden/Sinumerik-Ctrl/refs/heads/main/figures/step_response_imc2_vs_ast.svg)
 
 Considering how similar the IMC2 controller is to the AST and even more conservative in some regards, makes it reasonable to think that it could work on the real system. 
 As previously mentioned I no longer have access to the machine that the measurements were obtained from, but maybe it will be possible in the future.
