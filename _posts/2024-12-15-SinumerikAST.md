@@ -254,5 +254,7 @@ Secondly Iâ€™m even more impressed by the performance of the AST, considering Iâ
 
 TL;DR: AST Works really well, and the main limitations are the zeros of the system, even if they are stable. You can achieve higher bandwidth but at the cost of less robustness by canceling the undamped zeros in the plant.
 
-If you want to have a look at the code used for this analysis, it can be found on my github: [https://github.com/eliasrhoden/Sinumerik-Ctrl](https://github.com/eliasrhoden/Sinumerik-Ctrl)
+It has been fun to apply some control theory to real system by doing this case study, if you think I've missed something important or just want to discuss servo control, feel free to message me on github or on LinkedIn.
+
+If you want to have a look at the code used for this post, it can be found on my github: [https://github.com/eliasrhoden/Sinumerik-Ctrl](https://github.com/eliasrhoden/Sinumerik-Ctrl)
 
