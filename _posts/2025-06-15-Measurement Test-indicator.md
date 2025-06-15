@@ -13,7 +13,7 @@ One example is the TESA Twin T10, I would say that the biggest benefit is that y
 
 I’ve always wondered how these measurement probes work, and I’ve always assumed that it was some sort of analog signal. Recently I’ve gotten my hands on an old probe that was to be scrapped and thought that it would be perfect to try and build my own sensor reader/display.
 
-After some initial research I learned that the sensor used is a linear variable differential transformer (LVDT).  I really liked the animations from this website https://www.rdpe.com/ex/hiw-lvdt.htm
+After some initial research I learned that the sensor used is a linear variable differential transformer (LVDT).  I really liked the animations from this website [https://www.rdpe.com/ex/hiw-lvdt.htm](https://www.rdpe.com/ex/hiw-lvdt.htm)
 
 ![lvdt-gif](https://www.rdpe.com/images/anim/hiw-lvdt.gif)
 
