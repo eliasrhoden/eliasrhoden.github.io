@@ -97,9 +97,9 @@ $$
 \hat \phi = \texttt{atan2}(a_1,a_0)
 $$
 
-This does pose one problem, $A_s$ is always positive, and $\phi$ adjusts in order to accommodate the sign change of $A_s$, I solved this by simply checking what phase $V_{sns}$ had in the positive direction and negative direction, because in theory the phase should be 180 degrees apart in the negative and positive range.
+This does pose one problem, $$A_s$$ is always positive, and $$\phi$$ adjusts in order to accommodate the sign change of $$A_s$$, I solved this by simply checking what phase $$V_{sns}$$ had in the positive direction and negative direction, because in theory the phase should be 180 degrees apart in the negative and positive range.
 
-Assume that when measuring a positive value, $\phi = 60^\circ$ then I calculate the Amplitude with sign as
+Assume that when measuring a positive value, $$\phi = 60^\circ$$ then I calculate the Amplitude with sign as
 
 ```c
 measValue = amp;
@@ -108,7 +108,7 @@ if((phase > 150*3.14/180.0) || (phase < -30*3.14/180.0)){
 }
 ```
 
-The final least squares problem will be to identify the amplitude, phase and offset. Given $N$ measurements and the angular velocity $\Omega$, we need to solve
+The final least squares problem will be to identify the amplitude, phase and offset. Given $$N$$ measurements and the angular velocity $$\Omega$$, we need to solve
 
 $$
 M \theta = Y
@@ -137,7 +137,7 @@ n_{N-1}
 \end{bmatrix}
 $$
 
-One easy solution is to use the pseudo inverse by multiplying each side with $M^T$
+One easy solution is to use the pseudo inverse by multiplying each side with $$M^T$$
 
 $$
 M^T M \theta = M^T Y
