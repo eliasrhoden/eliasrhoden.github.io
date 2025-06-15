@@ -7,7 +7,7 @@ categories: embedded, LVDT, least-squares
 
 In a typical machine shop dial test indicators are widely used, for checking alignment, concentricity and general measurements. Often classical mechanical ones are used, but today there also exist digital ones.
 
-One example is the TESA Twin 10, I would say that the biggest benefit is that you don’t need to have the display where the measurement probe is.
+One example is the TESA Twin T10, I would say that the biggest benefit is that you can place the display at a distance (how long the cable is), maybe outside of the machine cover and more easily read the results.
 
 ![](/assets/images/lvdt/tesa_twin_t10.jpg)
 
@@ -44,7 +44,7 @@ Before ordering the final PCB I ran some tests in LTSpice, a simulation software
 
 ![](/assets/images/lvdt/ltspice_exc.png)
 
-![](/assets/images/lvdt/ltspice_voltage_exc.png)
+![](/assets/images/lvdt/ltspice_voltage_exc.PNG)
 
 If you want OP-amps that behave similar to ideal OP amps, that can drive the output close to the supply voltages, you need *rail to rail* OP-amps. The biggest advantage of using rail to rail amps in this application, is that by feeding the OP-amp that scales the ADC-input voltage with 3.3V it's impossible to send a voltage greater than 3.3V to the ADC, thus not risking sending an over-voltage to the MCU.
 
