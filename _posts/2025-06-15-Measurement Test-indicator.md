@@ -46,7 +46,7 @@ Before ordering the final PCB I ran some tests in LTSpice, a simulation software
 
 ![](/assets/images/lvdt/ltspice_voltage_exc.png)
 
-If you want OP-amps that behave similar to ideal OP amps, that can drive the output close to the supply voltages, you need *rail to rail* OP-amps. The biggest advantage of using rail to rail amps in this application, is that by feeding the OP-amp that scales the ADC-input voltage with 3.3V it's impossible to send a voltage greater than 3.3V to the ADC, thus not risking sending an overvoltage to the MCU.
+If you want OP-amps that behave similar to ideal OP amps, that can drive the output close to the supply voltages, you need *rail to rail* OP-amps. The biggest advantage of using rail to rail amps in this application, is that by feeding the OP-amp that scales the ADC-input voltage with 3.3V it's impossible to send a voltage greater than 3.3V to the ADC, thus not risking sending an over-voltage to the MCU.
 
 ![](/assets/images/lvdt/board0.jpg)
 
@@ -87,7 +87,7 @@ $$
 \hat \phi = \texttt{atan2}(a_1,a_0)
 $$
 
-This does pose one problem, $A_s$ is always positive, and $\phi$ adjusts in order to acomodate the sign change of $A_s$, I solved this by simply checking what phase $V_{sns}$ had in the positive direction and negative direction, because in theory the phase should be 180 degrees appart in the negative and positive range.
+This does pose one problem, $A_s$ is always positive, and $\phi$ adjusts in order to accommodate the sign change of $A_s$, I solved this by simply checking what phase $V_{sns}$ had in the positive direction and negative direction, because in theory the phase should be 180 degrees apart in the negative and positive range.
 
 Assume that when measuring a positive value, $\phi = 60^\circ$ then I calculate the Amplitude with sign as
 
@@ -127,7 +127,7 @@ n_{N-1}
 \end{bmatrix}
 $$
 
-One easy solution is to use the pseudo inverse by multipling each side with $M^T$
+One easy solution is to use the pseudo inverse by multiplying each side with $M^T$
 
 $$
 M^T M \theta = M^T Y
