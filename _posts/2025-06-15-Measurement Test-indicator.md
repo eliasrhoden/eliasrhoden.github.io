@@ -38,7 +38,17 @@ The final circuit can be seen here, note that this is rev 1.1, I forgot one of t
 
 ![](/assets/images/lvdt/schematic.png)
 
-In order to scale and offset the analog voltages I use OP-amps, there is plenty of information online of how to use them to scale signals. One thing that I did not know before starting this project was that a standard OP-amp cannot drive its output voltage to its supply voltages (rail voltage).
+In order to scale and offset the analog voltages I use OP-amps, there is plenty of information online of how to use them to scale signals. But in order to just scale a signal, amplify it, one could use a *non-inverting amplifier* circuit. It consits of an OP-amp and two resistors.
+
+![](/assets/images/lvdt/lvdt-op_amp.svg)
+
+In this circuit, the gain can be calculated as
+
+$$
+\frac{V_{out}}{V_{in}} = 1 + \frac{R_1}{R_2}
+$$
+
+One thing that I did not know before starting this project was that a standard OP-amp cannot drive its output voltage to its supply voltages (rail voltage).
 
 Before ordering the final PCB I ran some tests in LTSpice, a simulation software to verify that I calculated the correct values for the resistors. One can really dive deep into this, specifying all the electrical characteristics of the OP-amps, etc. For me it was good enough with ideal theoretical components.
 
