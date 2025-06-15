@@ -2,7 +2,7 @@
 layout: post
 title:  "Hardware for sensing digital test indicators"
 date:   2025-06-15 12:00:00 +0200
-categories: embedded, LVDT, least-squares
+categories: embedded
 ---
 
 In a typical machine shop dial test indicators are widely used, for checking alignment, concentricity and general measurements. Often classical mechanical ones are used, but today there also exist digital ones.
