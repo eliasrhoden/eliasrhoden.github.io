@@ -6,13 +6,13 @@ permalink: /about/
 
 Hello!
 
-My name is Elias and welcome to my blog, here I will write about random progamming projects that I do in my spare time. The idea is that this blog will serve as a complement to my [Github profile](https://github.com/eliasrhoden), where I can focus more on the backstory behing the projects I upload.
+My name is Elias and welcome to my blog, here I will write about random projects that I do in my spare time. The idea is that this blog will serve as a complement to my [Github profile](https://github.com/eliasrhoden), where I can focus more on the backstory behing the projects I upload.
 
 My general interests are:
 * Programming
-* Industrial Automation
-* Control theory/Control systems
-* Optimization
+* Industrial automation & machine tools
+* Control theory & Control systems
+* Numerical Optimization
 
 
-If you wanna check out my academic brackground, I would refer to my [LinkedIn profile](https://www.linkedin.com/in/elias-rhoden-265609224/).
+If you want to get in touch, please see my [LinkedIn profile](https://www.linkedin.com/in/elias-rhoden/).
